@@ -1,17 +1,51 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import InputField from './components/InputField';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+class App extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state= {
+            displayInputs:false,
+            name:'',
+            email:'',
+            phone:'',
+        };
+    }
+    handleFieldChange = (id , value,isRequired) => {
+        if(isRequired && value == '' )
+            this.setState({[id]:false});
+        else
+            this.setState({[id]:value});
+    }
+    handleClick = ()=>{
+        if(this.state.name !== false && this.state.email !== false && this.state.phone !== false )
+            this.setState({displayInputs:true});
+        else
+            alert('There is missing required input !');
+    }
+
+    render() {
+        return(
+            <div>
+                <h1> Welcome </h1>
+                { !this.state.displayInputs ?
+                    <div className="row">
+                        <InputField id="name" name={"Name"}  callbackFunction={this.handleFieldChange}  value={this.state['name']} isRequired={true} />
+                        <InputField id="email" name={"Email"} callbackFunction={this.handleFieldChange}  value={this.state['email']} isRequired={false} />
+                        <InputField id="phone" name={"Phone"}  callbackFunction={this.handleFieldChange}  value={this.state['phone']} isRequired={false} />
+                        <div><Button onClick={this.handleClick} >submit</Button></div>
+                    </div>:<div><h2>{this.state['name'] + " "+ this.state['email']  +" "+ this.state['phone'] }</h2></div>}
+            </div>
+        );
+    }
+}
+const Button = ({ onClick }) => (
+    <button onClick={onClick} type="button">
+        Show Inputs
+    </button>
 );
-
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+ReactDOM.render(
+    <App />,
+    document.getElementById('root')
+);
